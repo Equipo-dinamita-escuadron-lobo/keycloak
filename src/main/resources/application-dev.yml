@@ -1,12 +1,40 @@
 spring:
   application:
     name: keycloak
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT:30000}
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_ISSUER_URI}
           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+app:
+  recovery:
+    base-url: ${RECOVERY_FRONTEND_URL:http://localhost:5173/reset-password}  # URL del frontend que recibe ?token=
+    ttl-seconds: ${RECOVERY_TTL_SECONDS:3600}                                # 1 hora
+  jwt:
+    blacklist-prefix: jwt:black
+    recovery-prefix: "pwd:reset:"
+  session:
+    idle-seconds: 1800  # 30 minutos (si usas el filtro de inactividad opcional)
+  
 logging:
   level:
     org:
@@ -28,6 +56,7 @@ keycloak:
   user:
     console: ${KEYCLOAK_USER_CONSOLE}
   client:
+    id: ${KEYCLOAK_CLIENT_ID}
     secret: ${KEYCLOAK_CLIENT_SECRET}
   server:
     url: ${KEYCLOAK_SERVER_URL}
@@ -37,11 +66,14 @@ keycloak:
 
 server:
   port: ${PORT:0}
+  forward-headers-strategy: framework
 
 eureka:
   instance:
     instance-id: "${spring.application.name}:${random.uuid}"
-    prefer-ip-address: true
+    non-secure-port: ${server.port}
+    hostname: ${INSTANCE_HOSTNAME:localhost}
+
   client:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}

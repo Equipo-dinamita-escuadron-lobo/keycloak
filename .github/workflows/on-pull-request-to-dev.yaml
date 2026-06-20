@@ -1,24 +1,28 @@
-name: "Run unit tests on pull request to develop branch"
+name: "Run unit tests or integration tests on pull request to develop branch"
 on:
   pull_request:
     branches:
       - develop
+    paths:
+      - '.postman/**'
+      - '**.java'
+      - 'pom.xml'
+      - 'src/**'
+      - 'mvnw'
+      - '.mvn/**'
 
 jobs:
-  test:
+  unit-tests:
+    if: >
+      !endsWith(github.head_ref, 'integration')
+    uses:
+      Equipo-dinamita-escuadron-lobo/workflows/.github/workflows/backend-on-pull-request.yaml@main
+    with:
+      test-suffix: UnitTest
+    secrets: inherit
 
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-      - name: Tests with Maven
-        run: mvn test -Dtest=*UnitTest
-
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+  integration-tests:
+    if: endsWith(github.head_ref, 'integration')
+    uses:
+      Equipo-dinamita-escuadron-lobo/workflows/.github/workflows/backend-on-pull-request-newman.yaml@main
+    secrets: inherit

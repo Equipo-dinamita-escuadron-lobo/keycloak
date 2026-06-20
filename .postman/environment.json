@@ -1,0 +1,231 @@
+{
+    "id": "c88327ec-1b8a-4d0a-b064-987f9d0ef485",
+    "name": "local",
+    "values": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "loginPath",
+            "value": "/api/keycloak/token/",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "keycloakUser",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "keycloakPassword",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "noRoleUsername",
+            "value": "estudiante@unicauca.edu.co",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "noRolePassword",
+            "value": "Contapp#123",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "accessTokenAdmin",
+            "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhODlDQm1TNGxyNHoyRnhCOTFyV2hpOWlncXFxNDVLVzRVNjM3YVJnSEdBIn0.eyJleHAiOjE3NjMyNzA5MDEsImlhdCI6MTc2MzIzNDkwMiwianRpIjoiNTcwYWJmOGQtZjVlNi00MzFjLWE1NzctMzZjNDdmMTFkMzI5IiwiaXNzIjoiaHR0cDovL2NvbnRhYmxlcy51bmljYXVjYS5lZHUuY286ODAvYXV0aC9yZWFsbXMvb2F1dGgyLXJlYWxtIiwiYXVkIjoibWljcm9zZXJ2aWNlc19jbGllbnQiLCJzdWIiOiIyYjgxY2VmOC01NjUwLTRkYTEtOTUzMi1lYjA3YmNmNjg2NjIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtaWNyb3NlcnZpY2VzX2NsaWVudCIsInNlc3Npb25fc3RhdGUiOiJkMGM1YWNhNC02N2VmLTRkN2UtYjI1MC0zYzI0MmI3MjA5YmEiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9jb250YWJsZXMudW5pY2F1Y2EuZWR1LmNvOjQ0My8qIiwiaHR0cDovL2NvbnRhYmxlcy51bmljYXVjYS5lZHUuY28vKiIsImh0dHA6Ly9sb2NhbGhvc3Q6NDIwMC8qIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJQcm9mZXNvciIsIkFkbWluaXN0cmFkb3IiLCJFc3R1ZGlhbnRlIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibWljcm9zZXJ2aWNlc19jbGllbnQiOnsicm9sZXMiOlsic3VwZXJfY2xpZW50IiwidXNlcl9jbGllbnQiLCJhZG1pbl9jbGllbnQiXX19LCJhdXRob3JpemF0aW9uIjp7InBlcm1pc3Npb25zIjpbeyJzY29wZXMiOlsiY3JlYXRlIl0sInJzaWQiOiI4ZGNlYTkwNi04ZjdlLTQ0YmMtOGJlMy0xMDdmODIzZTkxZDQiLCJyc25hbWUiOiJDcmVhdGVfQ2F0ZWdvcnkifSx7InNjb3BlcyI6WyJjcmVhdGUiXSwicnNpZCI6ImVjYmRjZTljLTRmMzMtNDBlNC1hOTk5LTc5ZDRjZTViYThkZCIsInJzbmFtZSI6IkNyZWF0ZV9Vbml0X29mX01lYXN1cmVtZW50In0seyJzY29wZXMiOlsiZGVsZXRlIl0sInJzaWQiOiJjNTE0OWQ4Yi0wN2RiLTQzNzYtODk2OS0xMGY2YjMzOTFlMGUiLCJyc25hbWUiOiJEZWxldGVfUHJvZHVjdF9UeXBlIn0seyJzY29wZXMiOlsiY3JlYXRlIl0sInJzaWQiOiJmYTBkMmFjMi01NzYzLTQ1ZTgtOTkzZi00ODE0ZDU2ZDk0MDgiLCJyc25hbWUiOiJDcmVhdGVfUHJvZHVjdF9UeXBlIn0seyJzY29wZXMiOlsiZGVsZXRlIl0sInJzaWQiOiI4NjhiZmEwNy0wMmVhLTQ3NmQtODYwZS02MjE1NDQwYmUzNzkiLCJyc25hbWUiOiJEZWxldGVfVW5pdF9vZl9NZWFzdXJlbWVudCJ9LHsic2NvcGVzIjpbImNyZWF0ZSJdLCJyc2lkIjoiYmE2ZWQ1YWYtZmVhMi00OTZkLTlmMDAtZTFlNzViOTE3ODI5IiwicnNuYW1lIjoiQ3JlYXRlX1Byb2R1Y3QifSx7InNjb3BlcyI6WyJ1cGRhdGUiXSwicnNpZCI6IjU2ZjI3MDJmLTgwNGUtNDZhOS1iNWMwLWIyM2U1OTRmMWFmMCIsInJzbmFtZSI6IkNoYW5nZV9TdGF0ZV9Qcm9kdWN0X1R5cGUifSx7InJzaWQiOiJiYzM0MzkyMi0wOWQxLTRkMmQtODQ0NS0yMmYxZDMyNDMwZGEiLCJyc25hbWUiOiJEZWZhdWx0IFJlc291cmNlIn0seyJzY29wZXMiOlsidXBkYXRlIl0sInJzaWQiOiJkZGVmOWRjMC04NTljLTQ0OTItYjhjMS00ZGQzMWJmMzIwNDgiLCJyc25hbWUiOiJDaGFuZ2VfU3RhdGVfVW5pdF9vZl9NZWFzdXJlbWVudCJ9LHsic2NvcGVzIjpbInVwZGF0ZSJdLCJyc2lkIjoiMTUzYzJiZDUtN2JmMi00NGU2LWEzMmQtMGYzYWJmYmY5ZThiIiwicnNuYW1lIjoiRWRpdF9DYXRlZ29yeSJ9LHsic2NvcGVzIjpbInVwZGF0ZSJdLCJyc2lkIjoiMjQxYjk0NjYtOGQzZS00MDk4LWIzNzQtOWQ2YTkxYTY0NmU4IiwicnNuYW1lIjoiRWRpdF9Qcm9kdWN0X1R5cGUifSx7InNjb3BlcyI6WyJ1cGRhdGUiXSwicnNpZCI6ImE4NWRjMjQzLTFiMzAtNDMwZS05NTg4LTQ0NWQxNzFkZTU2MiIsInJzbmFtZSI6IkVkaXRfVW5pdF9vZl9NZWFzdXJlbWVudCJ9LHsic2NvcGVzIjpbImRlbGV0ZSJdLCJyc2lkIjoiYTY2NGE4MGMtMDc3YS00YjJmLWI0NDEtNDcwYzJhYmY2YTQ2IiwicnNuYW1lIjoiRGVsZXRlX0NhdGVnb3J5In0seyJzY29wZXMiOlsidXBkYXRlIl0sInJzaWQiOiJkNWU3MTgyMy04NWQ0LTQxNTYtODMxYi0xMThhZGZmZjBlNGMiLCJyc25hbWUiOiJDaGFuZ2VfU3RhdGVfQ2F0ZWdvcnkifSx7InNjb3BlcyI6WyJ1cGRhdGUiXSwicnNpZCI6ImY2YmFjNjBhLWJkZjAtNGUwNS04NmY2LTY5OGY5OGRkMmQxNCIsInJzbmFtZSI6IkVkaXRfUHJvZHVjdCJ9XX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6ImQwYzVhY2E0LTY3ZWYtNGQ3ZS1iMjUwLTNjMjQyYjcyMDliYSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQWRtaW5pc3RyYWRvciBDb250YWJsZXMiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjb250YWJsZXMyQHVuaWNhdWNhLmVkdS5jbyIsImdpdmVuX25hbWUiOiJBZG1pbmlzdHJhZG9yIiwiZmFtaWx5X25hbWUiOiJDb250YWJsZXMiLCJlbWFpbCI6ImNvbnRhYmxlczJAdW5pY2F1Y2EuZWR1LmNvIn0.gZ0PnnZgqa_4hCcLPhOGpnWEAECtzkEzwCfmd5zC1Xv0cXhpw0N4au7mjc7zAXDYQFMOIHiWbic_v00HWdE7O_nAkW5BGOW1ilVJFg4xvfpaTBir2z2dKrZpJJGlbdo_Y6boV4TmZVYeDd4lnVGSIiRFEPRmQQ0o8icWeOE_bGqw_kQwzzAHjufrzJ0uGaCIdjE6l_h_6a6ePBboPk4Y6T_oseR8sI9HVruzLlHSrB1A9l33jbIThmPxbAR7ZyzQiXOUPyb2SQK9p_eufz7fmWRdsIWPpVntIT1gyI_m7uJYH9Ymw7VLgY5k9_gC7TIbD3zphdJzbZTD4k2Az_HSFg",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "tokenExpTsAdmin",
+            "value": 1763270901114,
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "accessTokenNoRole",
+            "value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhODlDQm1TNGxyNHoyRnhCOTFyV2hpOWlncXFxNDVLVzRVNjM3YVJnSEdBIn0.eyJleHAiOjE3NjMyNzA5MTAsImlhdCI6MTc2MzIzNDkxMSwianRpIjoiOGNiMzgwY2EtM2NjNS00OWQxLTliODUtZjM3NzhlOTEwZGFlIiwiaXNzIjoiaHR0cDovL2NvbnRhYmxlcy51bmljYXVjYS5lZHUuY286ODAvYXV0aC9yZWFsbXMvb2F1dGgyLXJlYWxtIiwiYXVkIjoibWljcm9zZXJ2aWNlc19jbGllbnQiLCJzdWIiOiJhY2M2NjY0YS05MWQyLTQzNDUtODk1OC1lYmZlYzNmYzZlYTMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtaWNyb3NlcnZpY2VzX2NsaWVudCIsInNlc3Npb25fc3RhdGUiOiI3MDhhMDI0OC0wYWUwLTQ2NzEtYjc2Mi1hMGI4ZGFjM2FkNjciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9jb250YWJsZXMudW5pY2F1Y2EuZWR1LmNvOjQ0My8qIiwiaHR0cDovL2NvbnRhYmxlcy51bmljYXVjYS5lZHUuY28vKiIsImh0dHA6Ly9sb2NhbGhvc3Q6NDIwMC8qIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJFc3R1ZGlhbnRlIiwib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLW9hdXRoMi1yZWFsbSIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibWljcm9zZXJ2aWNlc19jbGllbnQiOnsicm9sZXMiOlsic3VwZXJfY2xpZW50Il19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJhdXRob3JpemF0aW9uIjp7InBlcm1pc3Npb25zIjpbeyJzY29wZXMiOlsiY3JlYXRlIl0sInJzaWQiOiI4ZGNlYTkwNi04ZjdlLTQ0YmMtOGJlMy0xMDdmODIzZTkxZDQiLCJyc25hbWUiOiJDcmVhdGVfQ2F0ZWdvcnkifSx7InNjb3BlcyI6WyJjcmVhdGUiXSwicnNpZCI6ImVjYmRjZTljLTRmMzMtNDBlNC1hOTk5LTc5ZDRjZTViYThkZCIsInJzbmFtZSI6IkNyZWF0ZV9Vbml0X29mX01lYXN1cmVtZW50In0seyJzY29wZXMiOlsiZGVsZXRlIl0sInJzaWQiOiJjNTE0OWQ4Yi0wN2RiLTQzNzYtODk2OS0xMGY2YjMzOTFlMGUiLCJyc25hbWUiOiJEZWxldGVfUHJvZHVjdF9UeXBlIn0seyJzY29wZXMiOlsiY3JlYXRlIl0sInJzaWQiOiJmYTBkMmFjMi01NzYzLTQ1ZTgtOTkzZi00ODE0ZDU2ZDk0MDgiLCJyc25hbWUiOiJDcmVhdGVfUHJvZHVjdF9UeXBlIn0seyJzY29wZXMiOlsiZGVsZXRlIl0sInJzaWQiOiI4NjhiZmEwNy0wMmVhLTQ3NmQtODYwZS02MjE1NDQwYmUzNzkiLCJyc25hbWUiOiJEZWxldGVfVW5pdF9vZl9NZWFzdXJlbWVudCJ9LHsic2NvcGVzIjpbInVwZGF0ZSJdLCJyc2lkIjoiNTZmMjcwMmYtODA0ZS00NmE5LWI1YzAtYjIzZTU5NGYxYWYwIiwicnNuYW1lIjoiQ2hhbmdlX1N0YXRlX1Byb2R1Y3RfVHlwZSJ9LHsicnNpZCI6ImJjMzQzOTIyLTA5ZDEtNGQyZC04NDQ1LTIyZjFkMzI0MzBkYSIsInJzbmFtZSI6IkRlZmF1bHQgUmVzb3VyY2UifSx7InNjb3BlcyI6WyJ1cGRhdGUiXSwicnNpZCI6ImRkZWY5ZGMwLTg1OWMtNDQ5Mi1iOGMxLTRkZDMxYmYzMjA0OCIsInJzbmFtZSI6IkNoYW5nZV9TdGF0ZV9Vbml0X29mX01lYXN1cmVtZW50In0seyJzY29wZXMiOlsidXBkYXRlIl0sInJzaWQiOiIxNTNjMmJkNS03YmYyLTQ0ZTYtYTMyZC0wZjNhYmZiZjllOGIiLCJyc25hbWUiOiJFZGl0X0NhdGVnb3J5In0seyJzY29wZXMiOlsidXBkYXRlIl0sInJzaWQiOiIyNDFiOTQ2Ni04ZDNlLTQwOTgtYjM3NC05ZDZhOTFhNjQ2ZTgiLCJyc25hbWUiOiJFZGl0X1Byb2R1Y3RfVHlwZSJ9LHsic2NvcGVzIjpbInVwZGF0ZSJdLCJyc2lkIjoiYTg1ZGMyNDMtMWIzMC00MzBlLTk1ODgtNDQ1ZDE3MWRlNTYyIiwicnNuYW1lIjoiRWRpdF9Vbml0X29mX01lYXN1cmVtZW50In0seyJzY29wZXMiOlsiZGVsZXRlIl0sInJzaWQiOiJhNjY0YTgwYy0wNzdhLTRiMmYtYjQ0MS00NzBjMmFiZjZhNDYiLCJyc25hbWUiOiJEZWxldGVfQ2F0ZWdvcnkifSx7InNjb3BlcyI6WyJ1cGRhdGUiXSwicnNpZCI6ImQ1ZTcxODIzLTg1ZDQtNDE1Ni04MzFiLTExOGFkZmZmMGU0YyIsInJzbmFtZSI6IkNoYW5nZV9TdGF0ZV9DYXRlZ29yeSJ9LHsic2NvcGVzIjpbInVwZGF0ZSJdLCJyc2lkIjoiZjZiYWM2MGEtYmRmMC00ZTA1LTg2ZjYtNjk4Zjk4ZGQyZDE0IiwicnNuYW1lIjoiRWRpdF9Qcm9kdWN0In1dfSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiNzA4YTAyNDgtMGFlMC00NjcxLWI3NjItYTBiOGRhYzNhZDY3IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiZXN0dWRpYW50ZU5vbWJyZSBlc3R1ZGlhbnRlQXBlbGxpZG8iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJlc3R1ZGlhbnRlQHVuaWNhdWNhLmVkdS5jbyIsImdpdmVuX25hbWUiOiJlc3R1ZGlhbnRlTm9tYnJlIiwiZmFtaWx5X25hbWUiOiJlc3R1ZGlhbnRlQXBlbGxpZG8iLCJlbWFpbCI6ImVzdHVkaWFudGVAdW5pY2F1Y2EuZWR1LmNvIn0.T8riJIs_jIiVAMdhhU3Vb8EFR2qwCZvcQQORMrvLez6sM2TfWR0r1MQ6hdknIiDXfElsRSC_IadNbp9n1OVHrGxWbk2sj3yL-iQx65jWNG0Lqv5CMH4dFG3gpdGEHxt3jTwgq_RLw2QdcLX4S31WVNiqHRTyfDQs6MObn8SDkEWOTJcBp0WLdxZ1Uwdj6LupDv2ThLn6lJlVzAKyKKql6nLQnP8ST9nOSSrzx3Hwari3mI48Dt-b-FJhGGGPpHcDHsfY8inKSLwqBdCsu312T_jMLSdQoqjSzZ2wLF7krEk9SmDMb6aagRXKDfJlJK-Ux3VTM7oiwZY4mmXqQRjyFQ",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "tokenExpTsNoRole",
+            "value": 1763270909017,
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileBasePath",
+            "value": "/api/keycloak/profile",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileTest_Name",
+            "value": "Perfil Pruebas Integración",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileTest_Description",
+            "value": "Asignado a usuario de pruebas",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userTestUsername",
+            "value": "usuariopruebas@unicauca.edu.co",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userTestEmail",
+            "value": "usuariopruebas@unicauca.edu.co",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userTestFirstName",
+            "value": "Usuario",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userTestLastName",
+            "value": "Pruebas Integracion",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userTestPassword",
+            "value": "Usuarioprueba@123",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "userBasePath",
+            "value": "/api/keycloak/",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileNotFound_Id",
+            "value": "11111111-1111-1111-1111-111111111111",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileName_NotFound",
+            "value": "Perfil_XYZ_Que_No_Existe_",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileCreate_Name",
+            "value": "Perfil Create Valid",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileCreate_Description",
+            "value": "Creado en Validación",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileDuplicate_Name",
+            "value": "{{profileTest_Name}}",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileInvalid_Name",
+            "value": "13/3#0/",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileInvalid_Description",
+            "value": "p.,as12(",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileCreate_Id_201",
+            "value": "8cc97a6b-1515-4e6b-a090-9e3a9c645943",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileUpdate_Name_OK",
+            "value": "Perfil Actualizado",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "profileUpdate_Description_OK",
+            "value": "Descripción actualizada",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "permissionsBasePath",
+            "value": "/api/keycloak/permissions",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "permAssign_RoleName",
+            "value": "Estudiante",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "permAssign_Permission1",
+            "value": "Crear Categoria",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "permAssign_Permission2",
+            "value": "Editar Categoria",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "roleNotFound_Name",
+            "value": "Rol Inexistente",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "permNotFound_Name",
+            "value": "Permiso Inexistente",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "updPerm_One",
+            "value": "Crear Producto",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "updPerm_Two",
+            "value": "Editar Producto",
+            "type": "default",
+            "enabled": true
+        }
+    ],
+    "_postman_variable_scope": "environment",
+    "_postman_exported_at": "2025-11-15T19:30:10.854Z",
+    "_postman_exported_using": "Postman/11.70.6"
+}

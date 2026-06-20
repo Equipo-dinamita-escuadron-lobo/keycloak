@@ -1,0 +1,2877 @@
+{
+    "info": {
+        "_postman_id": "36c753f9-e987-4935-80c0-f4ed9f53d44b",
+        "name": "Pruebas de Integración",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "42789084"
+    },
+    "item": [
+        {
+            "name": "1 Setup",
+            "item": [
+                {
+                    "name": "Token Admin",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// === Guardar token ADMIN con verificación estricta ===\r",
+                                    "function saveTokenStrict(label, tokenKey, expKey) {\r",
+                                    "  const hasResponse = !!pm.response && typeof pm.response.code === 'number';\r",
+                                    "\r",
+                                    "  pm.test(`[${label}] respuesta recibida`, () => {\r",
+                                    "    pm.expect(hasResponse, 'No hubo respuesta (¿server arrancando?)').to.be.true;\r",
+                                    "  });\r",
+                                    "  if (!hasResponse) return; // cortar aquí para evitar TypeError\r",
+                                    "\r",
+                                    "  pm.test(`Login ${label} 200 OK`, () => pm.response.to.have.status(200));\r",
+                                    "\r",
+                                    "  let j = {};\r",
+                                    "  try { j = pm.response.json(); } catch (e) { j = {}; }\r",
+                                    "\r",
+                                    "  pm.test(`[${label}] expires_in presente y > 0`, () => {\r",
+                                    "    pm.expect(j).to.have.property('expires_in');\r",
+                                    "    pm.expect(Number(j.expires_in)).to.be.a('number').and.to.be.greaterThan(0);\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  pm.environment.set(tokenKey, j.access_token || '');\r",
+                                    "  const ttl = Number(j.expires_in);\r",
+                                    "  pm.environment.set(expKey, Date.now() + ttl * 1000);\r",
+                                    "\r",
+                                    "  pm.test(`[${label}] ${tokenKey} seteado`, () => {\r",
+                                    "    pm.expect(pm.environment.get(tokenKey)).to.be.ok;\r",
+                                    "  });\r",
+                                    "  pm.test(`[${label}] ${expKey} en el futuro`, () => {\r",
+                                    "    pm.expect(Number(pm.environment.get(expKey))).to.be.greaterThan(Date.now());\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  console.log(`[${label.toUpperCase()}] expires_in:`, j.expires_in, 'refresh_expires_in:', j.refresh_expires_in);\r",
+                                    "}\r",
+                                    "\r",
+                                    "saveTokenStrict('admin', 'accessTokenAdmin', 'tokenExpTsAdmin');"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {}
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"username\": \"{{keycloakUser}}\",\r\n  \"password\": \"{{keycloakPassword}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}{{loginPath}}",
+                            "host": ["{{baseUrl}}{{loginPath}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Token No Role",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// === Guardar token NO-ROLE con verificación estricta ===\r",
+                                    "function saveTokenStrict(label, tokenKey, expKey) {\r",
+                                    "  pm.test(`Login ${label} 200 OK`, () => pm.response.to.have.status(200));\r",
+                                    "\r",
+                                    "  let j = {}; try { j = pm.response.json(); } catch (e) { j = {}; }\r",
+                                    "\r",
+                                    "  pm.test(`[${label}] expires_in presente y > 0`, () => {\r",
+                                    "    pm.expect(j).to.have.property(\"expires_in\");\r",
+                                    "    pm.expect(Number(j.expires_in)).to.be.a(\"number\").and.to.be.greaterThan(0);\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  pm.environment.set(tokenKey, j.access_token || \"\");\r",
+                                    "  const ttl = Number(j.expires_in);\r",
+                                    "  pm.environment.set(expKey, Date.now() + ttl * 1000);\r",
+                                    "\r",
+                                    "  pm.test(`[${label}] ${tokenKey} seteado`, () => {\r",
+                                    "    pm.expect(pm.environment.get(tokenKey)).to.be.ok;\r",
+                                    "  });\r",
+                                    "  pm.test(`[${label}] ${expKey} en el futuro`, () => {\r",
+                                    "    pm.expect(Number(pm.environment.get(expKey))).to.be.greaterThan(Date.now());\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  console.log(`[${label.toUpperCase()}] expires_in:`, j.expires_in, \"refresh_expires_in:\", j.refresh_expires_in);\r",
+                                    "}\r",
+                                    "\r",
+                                    "saveTokenStrict(\"no-role\", \"accessTokenNoRole\", \"tokenExpTsNoRole\");"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {}
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [""],
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {}
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"username\": \"{{noRoleUsername}}\",\r\n  \"password\": \"{{noRolePassword}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}{{loginPath}}",
+                            "host": ["{{baseUrl}}{{loginPath}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2 Execution",
+            "item": [
+                {
+                    "name": "Profiles",
+                    "item": [
+                        {
+                            "name": "Crear Perfil  (asignado)",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "// === Crear Perfil Test ===\r",
+                                            "(function saveProfileTest() {\r",
+                                            "  pm.test(\"[Perfil Test] 200/201\", () => pm.expect([200,201]).to.include(pm.response.code));\r",
+                                            "\r",
+                                            "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                            "\r",
+                                            "  pm.environment.set(\"profileTest_Id\", j.id || \"\");\r",
+                                            "  pm.test(\"[Perfil Test] id guardado\", () => pm.expect(pm.environment.get(\"profileTest_Id\")).to.be.ok);\r",
+                                            "  pm.test(\"[Perfil Test] name coincide\", () => pm.expect(j.name).to.eql(pm.environment.get(\"profileTest_Name\")));\r",
+                                            "\r",
+                                            "  console.log(\"[Perfil Test creado]\", j);\r",
+                                            "})();\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript",
+                                        "packages": {},
+                                        "requests": {}
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n  \"name\": \"{{profileTest_Name}}\",\r\n  \"description\": \"{{profileTest_Description}}\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                    "host": ["{{baseUrl}}{{profileBasePath}}"],
+                                    "path": ["create"]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "User",
+                    "item": [
+                        {
+                            "name": "Crear Usuario de Pruebas (con Perfil en roles)",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "// === Crear Usuario con Perfil Test ===\r",
+                                            "(function saveUser() {\r",
+                                            "  pm.test(\"[Usuario Test] 200/201\", () => pm.expect([200,201]).to.include(pm.response.code));\r",
+                                            "\r",
+                                            "  let j = {}; \r",
+                                            "  try { j = pm.response.json(); } catch(e) { j = {}; }\r",
+                                            "\r",
+                                            "  pm.test(\"[Usuario Test] email coincide\", () =>\r",
+                                            "    pm.expect(j.email).to.eql(pm.environment.get(\"userTestEmail\"))\r",
+                                            "  );\r",
+                                            "  pm.test(\"[Usuario Test] username coincide\", () =>\r",
+                                            "    pm.expect(j.username).to.eql(pm.environment.get(\"userTestUsername\"))\r",
+                                            "  );\r",
+                                            "\r",
+                                            "  let id = (j.id && String(j.id).trim() !== \"\" && j.id !== \"null\") ? j.id : \"\";\r",
+                                            "  if (id) {\r",
+                                            "    pm.environment.set(\"userTest_Id\", id);\r",
+                                            "    pm.test(\"[Usuario Test] userTest_Id guardado (body)\", () =>\r",
+                                            "      pm.expect(pm.environment.get(\"userTest_Id\")).to.be.ok\r",
+                                            "    );\r",
+                                            "    console.log(\"[Usuario Test creado] ID directo:\", id);\r",
+                                            "    return;\r",
+                                            "  }\r",
+                                            "\r",
+                                            "  const baseUrl   = pm.environment.get(\"baseUrl\");\r",
+                                            "  const username  = pm.environment.get(\"userTestUsername\");\r",
+                                            "  const token     = pm.environment.get(\"accessTokenAdmin\");\r",
+                                            "\r",
+                                            "  const urlRaw = `${baseUrl}/api/keycloak/users/${username}`;                 // con '@'\r",
+                                            "  const urlEnc = `${baseUrl}/api/keycloak/users/${encodeURIComponent(username)}`; // con %40\r",
+                                            "\r",
+                                            "  const reqOpts = (url) => ({\r",
+                                            "    url,\r",
+                                            "    method: \"GET\",\r",
+                                            "    header: {\r",
+                                            "      \"Authorization\": `Bearer ${token}`,\r",
+                                            "      \"Accept\": \"application/json\"\r",
+                                            "    }\r",
+                                            "  });\r",
+                                            "\r",
+                                            "  const handleLookup = (res, label) => {\r",
+                                            "    if (!res || res.code !== 200) return false;\r",
+                                            "    let arr = [];\r",
+                                            "    try { arr = res.json(); } catch(e) { arr = []; }\r",
+                                            "    if (Array.isArray(arr) && arr.length > 0) {\r",
+                                            "\r",
+                                            "      const user = arr.find(u => u && u.username === username) || arr[0];\r",
+                                            "      const userId = user?.id || \"\";\r",
+                                            "      if (userId) {\r",
+                                            "        pm.environment.set(\"userTest_Id\", userId);\r",
+                                            "        pm.test(`[Usuario Test] userTest_Id guardado (${label})`, () =>\r",
+                                            "          pm.expect(pm.environment.get(\"userTest_Id\")).to.be.ok\r",
+                                            "        );\r",
+                                            "        console.log(`[Usuario Test lookup ${label}] ID:`, userId);\r",
+                                            "        return true;\r",
+                                            "      }\r",
+                                            "    }\r",
+                                            "    return false;\r",
+                                            "  };\r",
+                                            "\r",
+                                            "  pm.sendRequest(reqOpts(urlRaw), (err1, res1) => {\r",
+                                            "    if (!err1 && handleLookup(res1, \"raw\")) return;\r",
+                                            "\r",
+                                            "    pm.sendRequest(reqOpts(urlEnc), (err2, res2) => {\r",
+                                            "      if (!err2 && handleLookup(res2, \"encoded\")) return;\r",
+                                            "\r",
+                                            "      pm.test(\"[Usuario Test] Lookup falló\", () => {\r",
+                                            "        pm.expect.fail(\"No se pudo obtener ID por username (raw ni encoded) con Bearer\");\r",
+                                            "      });\r",
+                                            "      console.warn(\"[Usuario Test] Lookup falló:\", {\r",
+                                            "        err1, code1: res1 && res1.code,\r",
+                                            "        err2, code2: res2 && res2.code\r",
+                                            "      });\r",
+                                            "    });\r",
+                                            "  });\r",
+                                            "})();"
+                                        ],
+                                        "type": "text/javascript",
+                                        "packages": {},
+                                        "requests": {}
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n  \"username\": \"{{userTestUsername}}\",\r\n  \"email\": \"{{userTestEmail}}\",\r\n  \"firstName\": \"{{userTestFirstName}}\",\r\n  \"lastName\": \"{{userTestLastName}}\",\r\n  \"password\": \"{{userTestPassword}}\",\r\n  \"roles\": [\"{{profileTest_Name}}\"]\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}{{userBasePath}}create",
+                                    "host": [
+                                        "{{baseUrl}}{{userBasePath}}create"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "3 Validation",
+            "item": [
+                {
+                    "name": "Profiles",
+                    "item": [
+                        {
+                            "name": "FindAll",
+                            "item": [
+                                {
+                                    "name": "FindAll – Positivo (200 con datos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindAll 200 (con datos) ===\r",
+                                                    "(function testFindAll200() {\r",
+                                                    "  pm.test(\"[FindAll] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = []; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindAll] es arreglo\", () => pm.expect(Array.isArray(j)).to.be.true);\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindAll 200] total:\", j.length);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindAll – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindAll 401 (sin token) ===\r",
+                                                    "(function testFindAll401() {\r",
+                                                    "  pm.test(\"[FindAll] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[FindAll] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[FindAll 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[FindAll 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "FindById",
+                            "item": [
+                                {
+                                    "name": "FindById – Positivo (200)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindById 200 (perfil existente) ===\r",
+                                                    "(function testFindById200() {\r",
+                                                    "  pm.test(\"[FindById] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindById] id coincide\", () =>\r",
+                                                    "    pm.expect(j.id).to.eql(pm.environment.get(\"profileTest_Id\"))\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindById] name coincide\", () =>\r",
+                                                    "    pm.expect(j.name).to.eql(pm.environment.get(\"profileTest_Name\"))\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindById] description presente\", () =>\r",
+                                                    "    pm.expect(j).to.have.property(\"description\")\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindById 200]\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findById/{{profileTest_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findById",
+                                                "{{profileTest_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindById – Negativo (404 no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindById 404 (no existe) ===\r",
+                                                    "(function testFindById404() {\r",
+                                                    "  pm.test(\"[FindById] 404 Not Found\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindById] cuerpo estándar 404\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindById 404]\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findById/{{profileNotFound_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findById",
+                                                "{{profileNotFound_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindById – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindById 401 (sin token) ===\r",
+                                                    "(function testFindById401() {\r",
+                                                    "  pm.test(\"[FindById] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[FindById] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[FindById 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[FindById 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findById/{{profileTest_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findById",
+                                                "{{profileTest_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "FindByName",
+                            "item": [
+                                {
+                                    "name": "FindByName – Positivo (200)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindByName 200 (hay resultados) ===\r",
+                                                    "(function testFindByName200() {\r",
+                                                    "  pm.test(\"[FindByName] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = []; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindByName] es arreglo\", () => pm.expect(Array.isArray(j)).to.be.true);\r",
+                                                    "  pm.test(\"[FindByName] longitud ≥ 1\", () => pm.expect(j.length).to.be.at.least(1));\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindByName] contiene el nombre buscado\", () => {\r",
+                                                    "    const names = j.map(x => x.name);\r",
+                                                    "    pm.expect(names).to.include(pm.environment.get(\"profileTest_Name\"));\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindByName 200] total:\", j.length);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findByName/{{profileTest_Name}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findByName",
+                                                "{{profileTest_Name}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindByName – Negativo (204 sin match)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindByName 204 (sin coincidencias) ===\r",
+                                                    "(function testFindByName204() {\r",
+                                                    "  pm.test(\"[FindByName] 204 No Content\", () => pm.response.to.have.status(204));\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindByName] body vacío\", () => {\r",
+                                                    "    const t = pm.response.text();\r",
+                                                    "    pm.expect(t === \"\" || t === undefined).to.be.true;\r",
+                                                    "  });\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findByName/{{profileName_NotFound}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findByName",
+                                                "{{profileName_NotFound}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindByName – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindByName 401 (sin token) ===\r",
+                                                    "(function testFindByName401() {\r",
+                                                    "  pm.test(\"[FindByName] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[FindByName] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[FindByName 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[FindByName 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findByName/{{profileTest_Name}}\n",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findByName",
+                                                "{{profileTest_Name}}\n"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Create",
+                            "item": [
+                                {
+                                    "name": "Create – Positivo (201)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Create 201 (válido) ===\r",
+                                                    "(function testCreate201() {\r",
+                                                    "  pm.test(\"[Create] 201 Created\", () => pm.expect(pm.response.code).to.eql(201));\r",
+                                                    "\r",
+                                                    "  let j = {}; \r",
+                                                    "  try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Create] id presente\", () => pm.expect(j.id).to.be.ok);\r",
+                                                    "  pm.test(\"[Create] name coincide\", () =>\r",
+                                                    "    pm.expect(j.name).to.eql(pm.environment.get(\"profileCreate_Name\"))\r",
+                                                    "  );\r",
+                                                    "  pm.test(\"[Create] description presente\", () =>\r",
+                                                    "    pm.expect(j).to.have.property(\"description\")\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  pm.environment.set(\"profileCreate_Id_201\", j.id || \"\");\r",
+                                                    "\r",
+                                                    "  console.log(\"[Create 201] Perfil creado:\", j.name, \"| ID:\", j.id);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileCreate_Name}}\",\r\n  \"description\": \"{{profileCreate_Description}}\"\r\n}\r\n",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["create"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Create – Negativo (400 datos inválidos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Create 400 (datos inválidos) ===\r",
+                                                    "(function testCreate400() {\r",
+                                                    "  pm.test(\"[Create] 400 Bad Request\", () => pm.expect(pm.response.code).to.eql(400));\r",
+                                                    "\r",
+                                                    "  let j = {}; \r",
+                                                    "  try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Create] cuerpo estándar 400\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 400);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Bad Request\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Create 400] Error esperado:\", j.message);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileInvalid_Name\",\r\n  \"description\": \"{{profileInvalid_Description}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["create"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Create – Negativo (409 duplicado)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Create 409 (duplicado) ===\r",
+                                                    "(function testCreate409() {\r",
+                                                    "  pm.test(\"[Create] 409 Conflict\", () => pm.expect(pm.response.code).to.eql(409));\r",
+                                                    "\r",
+                                                    "  let j = {}; \r",
+                                                    "  try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Create] cuerpo estándar 409\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 409);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Conflict\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Create 409] Mensaje:\", j.message);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileDuplicate_Name}}\",\r\n  \"description\": \"Intento duplicado\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["create"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Create – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Create 401 (sin token) ===\r",
+                                                    "(function testCreate401() {\r",
+                                                    "  pm.test(\"[Create] 401 Unauthorized\", () => pm.expect(pm.response.code).to.eql(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[Create] cuerpo JSON (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[Create 401] Body:\", j);\r",
+                                                    "  } catch (e) {\r",
+                                                    "    console.log(\"[Create 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "POST",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"Perfil SinToken\",\r\n  \"description\": \"Debe fallar 401\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["create"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Update",
+                            "item": [
+                                {
+                                    "name": "Update – Positivo (200)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 200 (válido sobre Perfil B) ===\r",
+                                                    "(function testUpdate200() {\r",
+                                                    "  pm.test(\"[Update] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] name actualizado\", () =>\r",
+                                                    "    pm.expect(j.name).to.eql(pm.environment.get(\"profileUpdate_Name_OK\"))\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] description actualizada\", () =>\r",
+                                                    "    pm.expect(j.description).to.eql(pm.environment.get(\"profileUpdate_Description_OK\"))\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  console.log(\"[Update 200] Perfil actualizado:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileUpdate_Name_OK}}\",\r\n  \"description\": \"{{profileUpdate_Description_OK}}\"\r\n}\r\n",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Update – Negativo (400 datos inválidos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 400 (datos inválidos) ===\r",
+                                                    "(function testUpdate400() {\r",
+                                                    "  pm.test(\"[Update] 400 Bad Request\", () => pm.response.to.have.status(400));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] cuerpo estándar 400\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 400);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Bad Request\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Update 400] Error:\", j.message);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileInvalid_Name\",\r\n  \"description\": \"{{profileInvalid_Description}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Update – Negativo (404 no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 404 (no existe) ===\r",
+                                                    "(function testUpdate404() {\r",
+                                                    "  pm.test(\"[Update] 404 Not Found\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] cuerpo estándar 404\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Update 404] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"Nombre Cualquiera\",\r\n  \"description\": \"No existe ID\"\r\n}\r\n",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileNotFound_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileNotFound_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Update – Negativo (409 duplicado)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 409 (duplicado) ===\r",
+                                                    "(function testUpdate409() {\r",
+                                                    "  pm.test(\"[Update] 409 Conflict\", () => pm.response.to.have.status(409));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] cuerpo estándar 409\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 409);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Conflict\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Update 409] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"{{profileDuplicate_Name}}\",\r\n  \"description\": \"Intento de duplicar nombre de Perfil A\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Update – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 401 (sin token) ===\r",
+                                                    "(function testUpdate401() {\r",
+                                                    "  pm.test(\"[Update] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[Update] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[Update 401] body:\", j);\r",
+                                                    "  } catch (e) {\r",
+                                                    "    console.log(\"[Update 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"Cualquiera\",\r\n  \"description\": \"Debe fallar \"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Delete",
+                            "item": [
+                                {
+                                    "name": "Delete – Positivo (204)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Delete 204 (perfil libre) ===\r",
+                                                    "(function testDelete204() {\r",
+                                                    "  pm.test(\"[Delete] 204 No Content\", () => pm.response.to.have.status(204));\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Delete] body vacío\", () => {\r",
+                                                    "    const t = pm.response.text();\r",
+                                                    "    pm.expect(t === \"\" || t === undefined).to.be.true;\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  pm.environment.unset(\"profileB_Id\");\r",
+                                                    "\r",
+                                                    "  console.log(\"[Delete 204] Perfil B eliminado\");\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "delete",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Delete – Negativo (404 no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Delete 404 (no existe) ===\r",
+                                                    "(function testDelete404() {\r",
+                                                    "  pm.test(\"[Delete] 404 Not Found\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Delete] cuerpo estándar 404\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Delete 404] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "// === Delete 401 (sin token) ===\r\n(function testDelete401() {\r\n  pm.test(\"[Delete] 401 Unauthorized\", () => pm.response.to.have.status(401));\r\n\r\n  try {\r\n    const j = pm.response.json();\r\n    pm.test(\"[Delete] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r\n    console.log(\"[Delete 401] body:\", j);\r\n  } catch (e) {\r\n    console.log(\"[Delete 401] sin cuerpo o no JSON\");\r\n  }\r\n})();\r\n",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileNotFound_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "delete",
+                                                "{{profileNotFound_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Delete – Negativo (409 asignado)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Delete 409 (perfil A asignado a usuario) ===\r",
+                                                    "(function testDelete409() {\r",
+                                                    "  pm.test(\"[Delete] 409 Conflict\", () => pm.response.to.have.status(409));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Delete] cuerpo estándar 409\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 409);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Conflict\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Delete 409] body:\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileTest_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "delete",
+                                                "{{profileTest_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Delete – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Delete 401 (sin token) ===\r",
+                                                    "(function testDelete401() {\r",
+                                                    "  pm.test(\"[Delete] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[Delete] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[Delete 401] body:\", j);\r",
+                                                    "  } catch (e) {\r",
+                                                    "    console.log(\"[Delete 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "delete",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Permissions",
+                    "item": [
+                        {
+                            "name": "FindAll",
+                            "item": [
+                                {
+                                    "name": "FindAll – Positivo (200 con datos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Permissions FindAll 200 (con datos) ===\r",
+                                                    "(function testPerms200() {\r",
+                                                    "  pm.test(\"[Perms/FindAll] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = []; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Perms/FindAll] es arreglo\", () => pm.expect(Array.isArray(j)).to.be.true);\r",
+                                                    "\r",
+                                                    "  console.log(\"[Perms/FindAll 200] total:\", j.length, \"sample:\", j[0]);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindAll – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Permissions FindAll 401 (sin token) ===\r",
+                                                    "(function testPerms401() {\r",
+                                                    "  pm.test(\"[Perms/FindAll] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[Perms/FindAll] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[Perms/FindAll 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[Perms/FindAll 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "AssignRoleToPermissions",
+                            "item": [
+                                {
+                                    "name": "AssignRoleToPermissions – Positivo (200)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 200 (válido) ===\r",
+                                                    "(function t200() {\r",
+                                                    "  pm.test(\"[Assign] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  const txt = pm.response.text() || \"\";\r",
+                                                    "  pm.test(\"[Assign] mensaje de éxito\", () =>\r",
+                                                    "    pm.expect(txt.toLowerCase()).to.include(\"éxito\")\r",
+                                                    "  );\r",
+                                                    "\r",
+                                                    "  console.log(\"[Assign 200] body:\", txt);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permAssign_Permission1}}\", \"{{permAssign_Permission2}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "AssignRoleToPermissions – Negativo (400 datos invalidos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 400 (lista vacía) ===\r",
+                                                    "(function t400() {\r",
+                                                    "  pm.test(\"[Assign] 400 Bad Request\", () => pm.response.to.have.status(400));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Assign] cuerpo estándar 400\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 400);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Bad Request\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Assign 400] msg:\", j.message);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [],\r\n  \"roleName\": \"\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "AssignRoleToPermissions – Negativo (404 rol no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 404 (rol no existe) ===\r",
+                                                    "(function t404Role() {\r",
+                                                    "  pm.test(\"[Assign] 404 Not Found (rol)\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Assign] cuerpo estándar 404 (rol)\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Assign 404 rol] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permAssign_Permision1}}\"],\r\n  \"roleName\": \"{{roleNotFound_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "AssignRoleToPermissions – Negativo (404 permiso no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 404 (permiso no existe) ===\r",
+                                                    "(function t404Perm() {\r",
+                                                    "  pm.test(\"[Assign] 404 Not Found (permiso)\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Assign] cuerpo estándar 404 (permiso)\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Assign 404 permiso] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permNotFound_Name}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "AssignRoleToPermissions – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 401 (sin token) ===\r",
+                                                    "(function t401() {\r",
+                                                    "  pm.test(\"[Assign] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[Assign] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[Assign 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[Assign 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permAssign_Permission1}}\"],\r\n  \"roleName\": \"{{permAssign_RoleName}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "RolesWithPermissions",
+                            "item": [
+                                {
+                                    "name": "RolesWithPermissions – Positivo (200 con datos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === RolesWithPermissions 200 (con datos) ===\r",
+                                                    "(function t200Data() {\r",
+                                                    "  pm.test(\"[RolesWithPerms] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[RolesWithPerms] es objeto (map)\", () =>\r",
+                                                    "    pm.expect(j).to.be.an(\"object\")\r",
+                                                    "  );\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/rolesWithPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["rolesWithPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "RolesWithPermissions – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === RolesWithPermissions 401 (sin token) ===\r",
+                                                    "(function t401() {\r",
+                                                    "  pm.test(\"[RolesWithPerms] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[RolesWithPerms] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[RolesWithPerms 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[RolesWithPerms 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/rolesWithPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["rolesWithPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "UpdatePermissionsForRole",
+                            "item": [
+                                {
+                                    "name": "UpdatePermissionsForRole – Positivo (200)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 200 (válido) ===\r",
+                                                    "(function t200() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 200 OK\", () => pm.response.to.have.status(200));\r",
+                                                    "  const txt = pm.response.text() || \"\";\r",
+                                                    "  pm.test(\"[UpdatePermsRole] mensaje de éxito\", () =>\r",
+                                                    "    pm.expect(txt.toLowerCase()).to.include(\"éxito\")\r",
+                                                    "  );\r",
+                                                    "  console.log(\"[UpdatePermsRole 200] body:\", txt);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{updPerm_One}}\", \"{{updPerm_Two}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "UpdatePermissionsForRole – Negativo (400 datos invalidos)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 400 (lista permisos vacía) ===\r",
+                                                    "(function t400() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 400 Bad Request\", () => pm.response.to.have.status(400));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[UpdatePermsRole] cuerpo estándar 400\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 400);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Bad Request\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "  console.log(\"[UpdatePermsRole 400] msg:\", j.message);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [],\r\n  \"roleName\": \"\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "UpdatePermissionsForRole – Negativo (404 rol no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 404 (rol no existe) ===\r",
+                                                    "(function t404Role() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 404 Not Found (rol)\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "  pm.test(\"[UpdatePermsRole] cuerpo estándar 404 (rol)\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "  console.log(\"[UpdatePermsRole 404 rol] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{updPerm_One}}\"],\r\n  \"roleName\": \"{{roleNotFound_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "UpdatePermissionsForRole – Negativo (404 permiso no existe)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 404 (permiso no existe) ===\r",
+                                                    "(function t404Perm() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 404 Not Found (permiso)\", () => pm.response.to.have.status(404));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "  pm.test(\"[UpdatePermsRole] cuerpo estándar 404 (permiso)\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 404);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Not Found\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "  console.log(\"[UpdatePermsRole 404 permiso] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permNotFound_Name}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}\r\n",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "UpdatePermissionsForRole – Negativo (401 sin token)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 401 (sin token) ===\r",
+                                                    "(function t401() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 401 Unauthorized\", () => pm.response.to.have.status(401));\r",
+                                                    "  try {\r",
+                                                    "    const j = pm.response.json();\r",
+                                                    "    pm.test(\"[UpdatePermsRole] 401 con cuerpo (opcional)\", () => pm.expect(j).to.be.an(\"object\"));\r",
+                                                    "    console.log(\"[UpdatePermsRole 401] body:\", j);\r",
+                                                    "  } catch(e) {\r",
+                                                    "    console.log(\"[UpdatePermsRole 401] sin cuerpo o no JSON\");\r",
+                                                    "  }\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "noauth"
+                                        },
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{updPerm_One}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}"
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Error 403 Sin Rol de Administrador",
+                    "item": [
+                        {
+                            "name": "Profiles",
+                            "item": [
+                                {
+                                    "name": "FindAll – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindAll 403 (usuario sin rol) ===\r",
+                                                    "(function testFindAll403() {\r",
+                                                    "  pm.test(\"[FindAll] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindAll] 403 cuerpo estándar\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindAll 403] error:\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "auth": {
+                                            "type": "bearer",
+                                            "bearer": [
+                                                {
+                                                    "key": "token",
+                                                    "value": "{{accessTokenNoRole}}",
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindById – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindById 403 (usuario sin rol) ===\r",
+                                                    "(function testFindById403() {\r",
+                                                    "  pm.test(\"[FindById] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindById] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindById 403]\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findById/{{profileTest_Id}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findById",
+                                                "{{profileTest_Id}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "FindByName – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === FindByName 403 (usuario sin rol) ===\r",
+                                                    "(function testFindByName403() {\r",
+                                                    "  pm.test(\"[FindByName] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[FindByName] 403 cuerpo estándar\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[FindByName 403] error:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/findByName/{{profileTest_Name}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "findByName",
+                                                "{{profileTest_Name}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Create – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Create 403 (sin rol) ===\r",
+                                                    "(function testCreate403() {\r",
+                                                    "  pm.test(\"[Create] 403 Forbidden\", () => pm.expect(pm.response.code).to.eql(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; \r",
+                                                    "  try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Create] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Create 403] Mensaje:\", j.message);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"Perfil SinRol\",\r\n  \"description\": \"Debe fallar\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/create",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": ["create"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Update – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Update 403 (usuario sin rol) ===\r",
+                                                    "(function testUpdate403() {\r",
+                                                    "  pm.test(\"[Update] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Update] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Update 403] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"name\": \"NoRole Update \",\r\n  \"description\": \"Debe fallar\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/update/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "update",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "Delete – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Delete 403 (usuario sin rol) ===\r",
+                                                    "(function testDelete403() {\r",
+                                                    "  pm.test(\"[Delete] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch (e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Delete] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Delete 403] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileCreate_Id_201}}",
+                                            "host": [
+                                                "{{baseUrl}}{{profileBasePath}}"
+                                            ],
+                                            "path": [
+                                                "delete",
+                                                "{{profileCreate_Id_201}}"
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Permissions",
+                            "item": [
+                                {
+                                    "name": "FindAll – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === Permissions FindAll 403 (usuario sin rol) ===\r",
+                                                    "(function testPerms403() {\r",
+                                                    "  pm.test(\"[Perms/FindAll] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  // Según tu GlobalExceptionHandler(AccessDeniedException)\r",
+                                                    "  pm.test(\"[Perms/FindAll] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Perms/FindAll 403] error:\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/findAll",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["findAll"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "AssignRoleToPermissions – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === AssignRoleToPermissions 403 (usuario sin rol) ===\r",
+                                                    "(function t403() {\r",
+                                                    "  pm.test(\"[Assign] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  pm.test(\"[Assign] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[Assign 403] body:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{permAssign_Permission1}}\"],\r\n  \"roleName\": \"{{permAssign_RoleName}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/assignRoleToPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["assignRoleToPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "RolesWithPermissions – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === RolesWithPermissions 403 (usuario sin rol) ===\r",
+                                                    "(function t403() {\r",
+                                                    "  pm.test(\"[RolesWithPerms] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "\r",
+                                                    "  // Según tu GlobalExceptionHandler(AccessDeniedException)\r",
+                                                    "  pm.test(\"[RolesWithPerms] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "\r",
+                                                    "  console.log(\"[RolesWithPerms 403] error:\", j);\r",
+                                                    "})();\r",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/rolesWithPermissions",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["rolesWithPermissions"]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "UpdatePermissionsForRole – Negativo (403 sin rol)",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "// === UpdatePermissionsForRole 403 (usuario sin rol) ===\r",
+                                                    "(function t403() {\r",
+                                                    "  pm.test(\"[UpdatePermsRole] 403 Forbidden\", () => pm.response.to.have.status(403));\r",
+                                                    "\r",
+                                                    "  let j = {}; try { j = pm.response.json(); } catch(e) {}\r",
+                                                    "  pm.test(\"[UpdatePermsRole] cuerpo estándar 403\", () => {\r",
+                                                    "    pm.expect(j).to.have.property(\"statusCode\", 403);\r",
+                                                    "    pm.expect(j).to.have.property(\"error\", \"Forbidden\");\r",
+                                                    "    pm.expect(j).to.have.property(\"message\");\r",
+                                                    "    pm.expect(j).to.have.property(\"path\");\r",
+                                                    "  });\r",
+                                                    "  console.log(\"[UpdatePermsRole 403] body:\", j);\r",
+                                                    "})();"
+                                                ],
+                                                "type": "text/javascript",
+                                                "packages": {},
+                                                "requests": {}
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\r\n  \"permissionNames\": [\"{{updPerm_One}}\"],\r\n  \"roleName\": \"{{profileTest_Name}}\"\r\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseUrl}}{{permissionsBasePath}}/updatePermissionsForRole",
+                                            "host": [
+                                                "{{baseUrl}}{{permissionsBasePath}}"
+                                            ],
+                                            "path": ["updatePermissionsForRole"]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        }
+                    ],
+                    "auth": {
+                        "type": "bearer",
+                        "bearer": [
+                            {
+                                "key": "token",
+                                "value": "{{accessTokenNoRole}}",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {},
+                                "exec": [""]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {},
+                                "exec": [
+                                    "// === AUTO-LOGIN NO-ROLE (carpeta) ===\r",
+                                    "(function autoLoginNoRole() {\r",
+                                    "  const G = k => pm.environment.get(k);\r",
+                                    "  const S = (k, v) => pm.environment.set(k, v);\r",
+                                    "\r",
+                                    "  const need = () => {\r",
+                                    "    const t = G(\"accessTokenNoRole\");\r",
+                                    "    const e = Number(G(\"tokenExpTsNoRole\") || 0);\r",
+                                    "    return !t || Date.now() > (e - 5000); // margen 5s\r",
+                                    "  };\r",
+                                    "\r",
+                                    "  const login = () => pm.sendRequest({\r",
+                                    "    url: G(\"baseUrlAuth\") + G(\"loginPath\"),\r",
+                                    "    method: \"POST\",\r",
+                                    "    header: { \"Content-Type\": \"application/json\" },\r",
+                                    "    body: {\r",
+                                    "      mode: \"raw\",\r",
+                                    "      raw: JSON.stringify({\r",
+                                    "        username: G(\"noRoleUsername\"),\r",
+                                    "        password: G(\"noRolePassword\")\r",
+                                    "      })\r",
+                                    "    }\r",
+                                    "  }, (err, res) => {\r",
+                                    "    pm.test(\"[no-role] login 200\", () => pm.expect(res.code).to.eql(200));\r",
+                                    "\r",
+                                    "    if (err || res.code !== 200) {\r",
+                                    "      const msg = res && typeof res.text === \"function\" ? res.text() : \"Sin respuesta válida\";\r",
+                                    "      console.error(\"[no-role] login error:\", err || res.code, msg);\r",
+                                    "      return;\r",
+                                    "    }\r",
+                                    "\r",
+                                    "    let j = {};\r",
+                                    "    try { j = res.json(); } catch (e) {\r",
+                                    "      console.error(\"[no-role] Error al parsear JSON:\", e);\r",
+                                    "      return;\r",
+                                    "    }\r",
+                                    "\r",
+                                    "    pm.test(\"[no-role] expires_in presente y > 0\", () => {\r",
+                                    "      pm.expect(j).to.have.property(\"expires_in\");\r",
+                                    "      pm.expect(Number(j.expires_in)).to.be.a(\"number\").and.to.be.greaterThan(0);\r",
+                                    "    });\r",
+                                    "\r",
+                                    "    if (!j.access_token) {\r",
+                                    "      console.error(\"[no-role] No se recibió access_token:\", j);\r",
+                                    "      return;\r",
+                                    "    }\r",
+                                    "\r",
+                                    "    S(\"accessTokenNoRole\", j.access_token);\r",
+                                    "    S(\"tokenExpTsNoRole\", Date.now() + Number(j.expires_in) * 1000);\r",
+                                    "\r",
+                                    "    console.log(\"[NO-ROLE] expires_in:\", j.expires_in, \"refresh_expires_in:\", j.refresh_expires_in);\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  if (need()) login();\r",
+                                    "})();"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "4 Teardown",
+            "item": [
+                {
+                    "name": "User – Eliminar usuario de pruebas",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// === Eliminar Usuario de Pruebas ===\r",
+                                    "(function deleteUser() {\r",
+                                    "  const userId = pm.environment.get(\"userTest_Id\");\r",
+                                    "\r",
+                                    "  pm.test(\"[Usuario] ID disponible\", () =>\r",
+                                    "    pm.expect(userId, \"Variable userTest_Id no seteada\").to.be.ok\r",
+                                    "  );\r",
+                                    "\r",
+                                    "  pm.test(\"[Usuario] Eliminación exitosa (200/204)\", () => {\r",
+                                    "    pm.expect([200, 204]).to.include(pm.response.code);\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  pm.environment.unset(\"userTest_Id\");\r",
+                                    "  console.log(\"[Usuario eliminado] ID:\", userId);\r",
+                                    "})();\r",
+                                    ""
+                                ],
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {}
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}{{userBasePath}}/delete/{{userTest_Id}}",
+                            "host": ["{{baseUrl}}{{userBasePath}}"],
+                            "path": ["delete", "{{userTest_Id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Profile - Eliminar Perfil de pruebas",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// === Eliminar Perfil de Pruebas ===\r",
+                                    "(function deleteProfile() {\r",
+                                    "  const profileId = pm.environment.get(\"profileTest_Id\");\r",
+                                    "\r",
+                                    "  pm.test(\"[Perfil Test] ID disponible\", () =>\r",
+                                    "    pm.expect(profileId, \"Variable profileTest_Id no seteada\").to.be.ok\r",
+                                    "  );\r",
+                                    "\r",
+                                    "  pm.test(\"[Perfil Test] Eliminación exitosa (204)\", () => {\r",
+                                    "    pm.expect(pm.response.code).to.eql(204);\r",
+                                    "  });\r",
+                                    "\r",
+                                    "  pm.environment.unset(\"profileTest_Id\");\r",
+                                    "  console.log(\"[Perfil Test eliminado] ID:\", profileId);\r",
+                                    "})();\r",
+                                    ""
+                                ],
+                                "type": "text/javascript",
+                                "packages": {},
+                                "requests": {}
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}{{profileBasePath}}/delete/{{profileTest_Id}}",
+                            "host": ["{{baseUrl}}{{profileBasePath}}"],
+                            "path": ["delete", "{{profileTest_Id}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessTokenAdmin}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                    "// === AUTO-LOGIN ADMIN MEJORADO (colección) ===\r",
+                    "(function autoLoginAdmin() {\r",
+                    "  const G = k => pm.environment.get(k);\r",
+                    "  const S = (k, v) => pm.environment.set(k, v);\r",
+                    "\r",
+                    "  const need = () => {\r",
+                    "    const t = G(\"accessTokenAdmin\");\r",
+                    "    const e = Number(G(\"tokenExpTsAdmin\") || 0);\r",
+                    "    return !t || Date.now() > (e - 5000); // margen 5s\r",
+                    "  };\r",
+                    "\r",
+                    "  // Si no necesita login, salir\r",
+                    "  if (!need()) {\r",
+                    "    console.log(\"[AUTO-LOGIN] Token aún válido, skip login\");\r",
+                    "    return;\r",
+                    "  }\r",
+                    "\r",
+                    "  const login = () => pm.sendRequest({\r",
+                    "    url: G(\"baseUrl\") + G(\"loginPath\"),\r",
+                    "    method: \"POST\",\r",
+                    "    header: { \"Content-Type\": \"application/json\" },\r",
+                    "    body: {\r",
+                    "      mode: \"raw\",\r",
+                    "      raw: JSON.stringify({\r",
+                    "        username: G(\"keycloakUser\"),\r",
+                    "        password: G(\"keycloakPassword\")\r",
+                    "      })\r",
+                    "    },\r",
+                    "    // Agregar timeout explícito\r",
+                    "    timeout: 10000\r",
+                    "  }, (err, res) => {\r",
+                    "    // ✅ VERIFICACIÓN ROBUSTA de la respuesta\r",
+                    "    if (err) {\r",
+                    "      console.error(\"[AUTO-LOGIN] Error de conexión:\", err.message);\r",
+                    "      return; // Salir silenciosamente\r",
+                    "    }\r",
+                    "\r",
+                    "    if (!res) {\r",
+                    "      console.error(\"[AUTO-LOGIN] No hubo respuesta del servidor\");\r",
+                    "      return;\r",
+                    "    }\r",
+                    "\r",
+                    "    if (!res.code) {\r",
+                    "      console.error(\"[AUTO-LOGIN] Respuesta incompleta, servidor posiblemente iniciando\");\r",
+                    "      return;\r",
+                    "    }\r",
+                    "\r",
+                    "    // Solo ahora ejecutar tests\r",
+                    "    pm.test(\"[AUTO-LOGIN] login 200\", () => pm.expect(res.code).to.eql(200));\r",
+                    "\r",
+                    "    if (res.code !== 200) {\r",
+                    "      const msg = res && typeof res.text === \"function\" ? res.text() : \"Sin respuesta válida\";\r",
+                    "      console.error(\"[AUTO-LOGIN] login error:\", res.code, msg);\r",
+                    "      return;\r",
+                    "    }\r",
+                    "\r",
+                    "    let j = {};\r",
+                    "    try { \r",
+                    "      j = res.json(); \r",
+                    "    } catch (e) {\r",
+                    "      console.error(\"[AUTO-LOGIN] Error al parsear JSON:\", e);\r",
+                    "      return;\r",
+                    "    }\r",
+                    "\r",
+                    "    pm.test(\"[AUTO-LOGIN] expires_in presente y > 0\", () => {\r",
+                    "      pm.expect(j).to.have.property(\"expires_in\");\r",
+                    "      pm.expect(Number(j.expires_in)).to.be.a(\"number\").and.to.be.greaterThan(0);\r",
+                    "    });\r",
+                    "\r",
+                    "    if (!j.access_token) {\r",
+                    "      console.error(\"[AUTO-LOGIN] No se recibió access_token:\", j);\r",
+                    "      return;\r",
+                    "    }\r",
+                    "\r",
+                    "    S(\"accessTokenAdmin\", j.access_token);\r",
+                    "    S(\"tokenExpTsAdmin\", Date.now() + Number(j.expires_in) * 1000);\r",
+                    "\r",
+                    "    console.log(\"[AUTO-LOGIN] ✅ Login exitoso - expires_in:\", j.expires_in);\r",
+                    "  });\r",
+                    "\r",
+                    "  console.log(\"[AUTO-LOGIN] 🔄 Intentando login...\");\r",
+                    "  login();\r",
+                    "})();"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [""]
+            }
+        }
+    ]
+}
