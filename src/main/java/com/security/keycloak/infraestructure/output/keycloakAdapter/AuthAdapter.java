@@ -28,6 +28,9 @@ public class AuthAdapter implements IAuthOutputPort{
     @Value("${jwt.public.key}")
     private  String publicKeyString;
 
+    @Value("${jwt.auth.converter.resource-id}")
+    private String resourceId;
+
     /**
      * Obtiene el usuario actual a partir del encabezado de autorización.
      *
@@ -50,13 +53,19 @@ public class AuthAdapter implements IAuthOutputPort{
 
             // Crea un objeto User a partir de los claims del token.
             @SuppressWarnings("unchecked")
+            Map<String, Object> resourceAccess = claims.get("resource_access", Map.class);
+            Map<String, Object> clientAccess = resourceAccess == null
+                    ? null : (Map<String, Object>) resourceAccess.get(resourceId);
+            List<String> roles = clientAccess == null
+                    ? List.of() : (List<String>) clientAccess.getOrDefault("roles", List.of());
+
             User user = User.builder()
             .id(claims.get("sub").toString())
             .username(claims.get("preferred_username").toString())
             .email("** email **")
             .firstName(claims.get("given_name").toString())
             .lastName(claims.get("family_name").toString())
-            .roles((List<String>) (((Map<String, Object>) claims.get("realm_access"))).get("roles"))
+            .roles(roles)
             .build();
 
             return user;

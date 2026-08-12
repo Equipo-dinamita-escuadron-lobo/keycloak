@@ -385,6 +385,38 @@
           "clientRole": true,
           "containerId": "341fd012-a3d7-4223-8cf9-abd4292fd4bb",
           "attributes": {}
+        },
+        {
+          "name": "Estudiante",
+          "description": "Operaciones funcionales PP8",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "341fd012-a3d7-4223-8cf9-abd4292fd4bb",
+          "attributes": {}
+        },
+        {
+          "name": "Profesor",
+          "description": "Operaciones funcionales PP8",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "341fd012-a3d7-4223-8cf9-abd4292fd4bb",
+          "attributes": {}
+        },
+        {
+          "name": "Administrador",
+          "description": "Operaciones funcionales PP8 y administracion",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "341fd012-a3d7-4223-8cf9-abd4292fd4bb",
+          "attributes": {}
+        },
+        {
+          "name": "Invitado",
+          "description": "Sin acceso funcional a Tesoreria",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "341fd012-a3d7-4223-8cf9-abd4292fd4bb",
+          "attributes": {}
         }
       ],
       "broker": [
@@ -773,7 +805,6 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
       "redirectUris": [
         "",
         "http://localhost:4200/*"
@@ -873,6 +904,151 @@
         "phone",
         "offline_access",
         "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "treasury-service",
+      "name": "PP8 Treasury technical client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "client_credentials.use_refresh_token": "false"
+      },
+      "fullScopeAllowed": false,
+      "protocolMappers": [
+        {
+          "name": "tenant_ids",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_ids",
+            "claim.name": "tenant_ids",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        },
+        {
+          "name": "account-catalogue audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "account-catalogue",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "ms-notifications audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "ms-notifications",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "facture-service",
+      "name": "PP8 Purchase invoice technical client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "client_credentials.use_refresh_token": "false"
+      },
+      "fullScopeAllowed": false,
+      "protocolMappers": [
+        {
+          "name": "tenant_ids",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_ids",
+            "claim.name": "tenant_ids",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        },
+        {
+          "name": "treasury audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "treasury",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "account-catalogue-service",
+      "name": "PP8 Accounting result technical client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "client_credentials.use_refresh_token": "false"
+      },
+      "fullScopeAllowed": false,
+      "protocolMappers": [
+        {
+          "name": "tenant_ids",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_ids",
+            "claim.name": "tenant_ids",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        },
+        {
+          "name": "treasury audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "treasury",
+            "access.token.claim": "true"
+          }
+        }
       ]
     },
     {

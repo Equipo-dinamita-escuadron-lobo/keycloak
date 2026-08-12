@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
-@PreAuthorize("hasRole('admin_client')")
+@PreAuthorize("hasAnyRole('Administrador', 'admin_client')")
 @RequestMapping("/keycloak")
 @CrossOrigin("*")
 public class KeycloakController {
@@ -119,7 +119,7 @@ public class KeycloakController {
             @ApiResponse(responseCode = "401", description = "No autorizado o token inválido", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno al recuperar la información del usuario", content = @Content(mediaType = "application/json"))
     })
-    @PreAuthorize("hasRole('user_client') or hasRole('admin_client')")
+    @PreAuthorize("hasAnyRole('Estudiante', 'Profesor', 'Administrador', 'Invitado', 'user_client', 'admin_client')")
     @GetMapping("/getCurrentUser")
     public UserResponse obtenerUsername(@RequestHeader("Authorization") String authorizationHeader)
             throws NoSuchAlgorithmException, InvalidKeySpecException {

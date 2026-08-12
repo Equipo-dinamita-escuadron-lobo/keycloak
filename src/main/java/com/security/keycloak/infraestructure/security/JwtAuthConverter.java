@@ -14,8 +14,10 @@ import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * JwtAuthConverter es un componente que convierte un objeto Jwt en un AbstractAuthenticationToken.
@@ -32,8 +34,6 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     @Value("${jwt.auth.converter.resource-id}")
     private String resourceId;
 
-    Jwt jwtToken;
-
     /**
      * Convierte un objeto Jwt en un AbstractAuthenticationToken.
      * 
@@ -47,8 +47,6 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         Collection<GrantedAuthority> authorities = Stream
             .concat(jwtGrantedAuthoritiesConverter.convert(jwt).stream(), extractResourceRoles(jwt).stream())
             .toList();
-
-        this.jwtToken = jwt;
 
         return new JwtAuthenticationToken(jwt, authorities, getPrincipleName(jwt));
         
@@ -116,7 +114,11 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
      */
     @Override
     public String getUserId() {
-        return (String) jwtToken.getClaims().get("sub");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            return jwtAuthenticationToken.getToken().getSubject();
+        }
+        throw new IllegalStateException("No authenticated JWT is available in the current request");
     }
     
 }
